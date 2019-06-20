@@ -1,10 +1,11 @@
+// Author: Linwish
+// Description: A nodejs scraper for fetching Baidu news.
+
 const express = require('express');
 const superagent= require('superagent');
 const cheerio = require('cheerio');
-const Nightmare = require('nightmare');
 
 const app = express();
-const nightmare = Nightmare({ show: true }); 
 
 // Initialize server
 let server = app.listen(3000, () => {
@@ -15,7 +16,6 @@ let server = app.listen(3000, () => {
 
 // Global news list
 let gHotNews = [];                       
-let gLocalNews = [];    
 
 superagent.get('http://news.baidu.com/').end(async (err, res) => {
   if (err) {
@@ -25,21 +25,9 @@ superagent.get('http://news.baidu.com/').end(async (err, res) => {
   }
 });
 
-nightmare
-.goto('http://news.baidu.com/')
-.wait("div#local_news")
-.evaluate(() => document.querySelector("div#local_news").innerHTML)
-.then(res => {
-  gLocalNews = getLocalNews(res)
-})
-.catch(error => {
-  console.log(`Error fetching local news: ${error}`);
-})
-
 app.get('/', async (req, res, next) => {
     res.json({
         hotNews: gHotNews,
-        localNews: gLocalNews
     });
 });
 
@@ -56,19 +44,6 @@ let getHotNews = (res) => {
     });
     return hotNews
   };
-
-// Parse local news
-let getLocalNews = (res) => {
-  let localNews = [];
-  let $ = cheerio.load(res.text);
-  $('ul#localnews-focus li a').each((_, elem) => {
-    localNews.push(getNews(elem))
-  });
-  $('div#localnews-zixun ul li a').each((_, elem) => {
-    localNews.push(getNews(elem));
-  });
-  return localNews
-};
 
 let getNews = (elem) => {
     let news = {

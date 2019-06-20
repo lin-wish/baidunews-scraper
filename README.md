@@ -1,7 +1,25 @@
 # baidunews-scraper
-A simple scraper in nodejs
+A nodejs scraper for fetching Baidu news.
 
-## Run
+## Dependencies
+- cheerio
+- superagent
+- express
+
+## Install
+```bash
+npm i 
+```
+or
+```bash
+yarn
+```
+
+## Start
 ```bash
 npm start
 ```
+
+## LICENSE
+MIT
+
